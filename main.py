@@ -1,49 +1,22 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from dotenv import load_dotenv
-from os import getenv
+from aiogram import Bot
 import logging
-import random
-import os
 
-
-load_dotenv()
-bot = Bot(token=getenv('BOT_TOKEN'))
-dp = Dispatcher()
-
-
-users = []
-@dp.message(Command('start'))
-async def start_cmd(message: types.Message):
-    if message.from_user.id not in users:
-        users.append(message.from_user.id)
-    await message.answer(f'salam! {message.from_user.first_name}, we serve {len(users)} users')
-
-
-@dp.message(Command('myinfo'))
-async def start_cmd(message: types.Message):
-    image_dir = 'images/random_photo'
-    image_files = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
-    random_image = random.choice(image_files)
-    file_path = os.path.join('images/random_photo', random_image)
-    file = types.FSInputFile(file_path)
-    await message.answer_photo(photo=file, caption=f'your id: {message.from_user.id}\n'
-                         f'your username: {message.from_user.username}\n'
-                         f'your first_name: {message.from_user.first_name}')
-
-
-@dp.message(Command('random_pic'))
-async def random_pic(message: types.Message):
-    image_dir = 'images/random_photo'
-    image_files = [f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))]
-    random_image = random.choice(image_files)
-    file_path = os.path.join('images/random_photo', random_image)
-    file = types.FSInputFile(file_path)
-    await message.answer_photo(photo=file)
+from config import bot, dp, set_my_menu
+from handlers.start import start_router
+from handlers.myinfo import myinfo_router
+from handlers.randompic import randompic_router
+from handlers.menu import menu_router
+from handlers.generic_answer import echo_router
 
 
 async def main():
+    await set_my_menu()
+    dp.include_router(start_router)
+    dp.include_router(myinfo_router)
+    dp.include_router(randompic_router)
+    dp.include_router(menu_router)
+    dp.include_router(echo_router)
     await dp.start_polling(bot)
 
 
