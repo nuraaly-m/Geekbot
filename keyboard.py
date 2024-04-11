@@ -16,6 +16,9 @@ def start_keyboard():
             [
                 types.InlineKeyboardButton(text='меню', callback_data='меню'),
                 types.InlineKeyboardButton(text='отзывы', callback_data='отзывы')
+            ],
+            [
+                types.InlineKeyboardButton(text='оставить отзыв', callback_data='feedback')
             ]
         ]
 
