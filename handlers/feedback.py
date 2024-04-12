@@ -44,17 +44,17 @@ async def process_date(message: types.Message, state: FSMContext):
         return
     await state.update_data(date=int(date))
     await state.set_state(Feedback.food)
+    kb = types.ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                types.KeyboardButton(text='хорошее'),
+                types.KeyboardButton(text='удовлетворительное'),
+                types.KeyboardButton(text='плохое')
+            ]
+        ],
+        resize_keyboard=True
+    )
     await message.answer('какое было качество еды?', reply_markup=kb)
-kb = types.ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            types.KeyboardButton(text='хорошее'),
-            types.KeyboardButton(text='удовлетворительное'),
-            types.KeyboardButton(text='плохое')
-        ]
-    ],
-    resize_keyboard=True
-)
 
 
 @feedback_router.message(Feedback.food)
