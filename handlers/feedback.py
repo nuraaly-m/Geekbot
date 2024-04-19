@@ -1,9 +1,11 @@
 from aiogram import Router, F, types
+from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-
+from config import database
 
 feedback_router = Router()
+
 
 class Feedback(StatesGroup):
     name = State()
@@ -13,6 +15,12 @@ class Feedback(StatesGroup):
     cleanliness = State()
     comments = State()
 
+
+@feedback_router.message(Command("stop"))
+@feedback_router.message(F.text.lower() == "стоп")
+async def stop(message: types.Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Спасибо за прохождение опроса!")
 
 
 @feedback_router.callback_query(F.data == 'feedback')
@@ -42,7 +50,7 @@ async def process_date(message: types.Message, state: FSMContext):
     if not date.isdigit():
         await message.answer('вводите цифры')
         return
-    await state.update_data(date=int(date))
+    await state.update_data(date=date)
     await state.set_state(Feedback.food)
     kb = types.ReplyKeyboardMarkup(
         keyboard=[
@@ -61,17 +69,33 @@ async def process_date(message: types.Message, state: FSMContext):
 async def process_food(message: types.Message, state: FSMContext):
     await state.update_data(food=message.text)
     await state.set_state(Feedback.cleanliness)
-    await message.answer('как оцениваете чистоту заведения?')
+    await message.answer('как оцениваете чистоту заведения? (от 1 до 10)')
 
 
 @feedback_router.message(Feedback.cleanliness)
 async def process_cleanlines(message: types.Message, state: FSMContext):
-    await state.update_data(cleanlines=message.text)
+    cleanliness = message.text
+    if not cleanliness.isdigit():
+        await message.answer('вводите цифру от 1 дот 10')
+        return
+    if int(cleanliness) < 1 or int(cleanliness) > 10:
+        await message.answer('вводите цифру от 1 до 10')
+        return
+    await state.update_data(cleanliness=cleanliness)
     await state.set_state(Feedback.comments)
+    data = await state.get_data()
+    print('!', data)
     await message.answer('дополноительные комментарии:')
 
 
 @feedback_router.message(Feedback.comments)
 async def process_comments(message: types.Message, state: FSMContext):
     await state.update_data(comments=message.text)
+    data = await state.get_data()
+    print('~', data)
+    await database.execute(
+        "INSERT INTO feedback (name, contact, date, food, cleanliess, comments) VALUES (?, ?, ?, ?, ?, ?)",
+        (data['name'], data['contact'], data['date'], data['food'], data['cleanliness'], data['comments'])
+    )
     await message.answer('спасибо за отзыв')
+    await state.clear()

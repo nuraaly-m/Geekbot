@@ -19,3 +19,5 @@ python-dotenv==1.0.1
 six @ file:///AppleInternal/Library/BuildRoots/860631e9-c1c5-11ee-98ee-b6ef2fd8d87b/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
 typing_extensions==4.10.0
 yarl==1.9.4
+
+aiosqlite~=0.20.0
