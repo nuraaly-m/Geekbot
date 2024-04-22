@@ -85,7 +85,7 @@ async def process_cleanlines(message: types.Message, state: FSMContext):
     await state.set_state(Feedback.comments)
     data = await state.get_data()
     print('!', data)
-    await message.answer('дополноительные комментарии:')
+    await message.answer('дополнительные комментарии:')
 
 
 @feedback_router.message(Feedback.comments)
@@ -94,7 +94,7 @@ async def process_comments(message: types.Message, state: FSMContext):
     data = await state.get_data()
     print('~', data)
     await database.execute(
-        "INSERT INTO feedback (name, contact, date, food, cleanliess, comments) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO feedback (name, contact, date, food, cleanliness, comments) VALUES (?, ?, ?, ?, ?, ?)",
         (data['name'], data['contact'], data['date'], data['food'], data['cleanliness'], data['comments'])
     )
     await message.answer('спасибо за отзыв')
