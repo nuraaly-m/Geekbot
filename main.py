@@ -9,7 +9,7 @@ from handlers.randompic import randompic_router
 from handlers.menu import menu_router
 from handlers.feedback import feedback_router
 from handlers.generic_answer import echo_router
-
+from crawler.house_kg import house_router
 
 async def on_startup(bot: Bot):
     await database.create_tables()
@@ -18,6 +18,7 @@ async def on_startup(bot: Bot):
 async def main():
     await set_my_menu()
     dp.include_router(start_router)
+    dp.include_router(house_router)
     dp.include_router(myinfo_router)
     dp.include_router(randompic_router)
     dp.include_router(menu_router)
