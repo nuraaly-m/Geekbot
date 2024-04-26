@@ -73,7 +73,7 @@ async def process_food(message: types.Message, state: FSMContext):
 
 
 @feedback_router.message(Feedback.cleanliness)
-async def process_cleanlines(message: types.Message, state: FSMContext):
+async def process_cleanliness(message: types.Message, state: FSMContext):
     cleanliness = message.text
     if not cleanliness.isdigit():
         await message.answer('вводите цифру от 1 дот 10')
