@@ -9,7 +9,7 @@ from handlers.randompic import randompic_router
 from handlers.menu import menu_router
 from handlers.feedback import feedback_router
 from handlers.generic_answer import echo_router
-from crawler.house_kg import house_router
+from handlers.house_link import house_router
 
 async def on_startup(bot: Bot):
     await database.create_tables()

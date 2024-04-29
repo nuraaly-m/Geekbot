@@ -21,12 +21,3 @@ class HouseCrawler:
         full_links = list(map(lambda x: self.BASE_URL + x, links))
         return full_links[:3]
 
-
-@house_router.callback_query(F.data == 'house')
-async def house_links(cb: types.CallbackQuery):
-    crawler = HouseCrawler()
-    await crawler.get_page()
-    links = await crawler.get_house_links()
-    for link in links:
-        await cb.message.answer(str(link))
-
